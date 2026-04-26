@@ -17,5 +17,5 @@ export type Product = {
   description: string;
   categoryId: string;
   category?: string;
-  accent: string;
+  accent?: string;
 };
