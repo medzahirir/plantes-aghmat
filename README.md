@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aghmat Plants
 
-## Getting Started
+Marketing landing page for a Morocco-based plant business built with Next.js App Router, Tailwind CSS, Zustand, and Zod.
 
-First, run the development server:
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create `.env.local` from `.env.example`.
 
-## Learn More
+```bash
+cp .env.example .env.local
+```
 
-To learn more about Next.js, take a look at the following resources:
+Required values:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `NEXT_PUBLIC_SITE_URL`
+- `NEXT_PUBLIC_BUSINESS_NAME`
+- `NEXT_PUBLIC_BUSINESS_PHONE`
+- `NEXT_PUBLIC_BUSINESS_EMAIL`
+- `NEXT_PUBLIC_WHATSAPP_NUMBER`
+- `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL`
+- `CONTACT_RECIPIENT_EMAIL`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Quality checks
 
-## Deploy on Vercel
+```bash
+npm run check
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Vercel deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Import the repository into Vercel.
+2. Set the framework preset to `Next.js` if Vercel does not detect it automatically.
+3. Add the variables from `.env.example` in the Vercel project settings.
+4. Deploy with the default build command `npm run build`.
+
+This project already includes:
+
+- production security headers in `next.config.ts`
+- production-friendly compression and `poweredByHeader` disabled
+- `next/image` usage for catalog media
+- lazy loading for client-only cart and contact form bundles
+- env-backed site configuration in `lib/config/site.ts`

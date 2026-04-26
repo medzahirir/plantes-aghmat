@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"--color-\" /c/Projects_/plantes-aghmat/app --include=\"*.tsx\" --include=\"*.css\")",
+      "Bash(xargs grep *)",
+      "Bash(xargs -0 grep -l \"color-accent\\\\|color-card\\\\|color-surface-strong\")"
+    ]
+  }
+}
