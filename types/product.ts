@@ -16,6 +16,6 @@ export type Product = {
   image: ProductImage;
   description: string;
   categoryId: string;
-  category: string;
+  category?: string;
   accent: string;
 };
