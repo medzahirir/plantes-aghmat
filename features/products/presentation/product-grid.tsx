@@ -116,6 +116,10 @@ export function ProductGrid() {
               >
                 VOIR LES {filtered.length - DEFAULT_VISIBLE} AUTRES PLANTES
               </button>
+              <button onClick={() => {
+  alert("CLICK WORKS");
+}}    >  click work alert test
+              </button>
             </div>
           )}
         </>
