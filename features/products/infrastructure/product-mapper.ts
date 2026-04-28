@@ -32,8 +32,8 @@ export function toProduct(
   ];
 
   if (!generatedImages.includes(src)) {
-    // Use a high-quality plant placeholder from Unsplash for missing local assets
-    src = `https://images.unsplash.com/photo-1545239351-ef35f43d514b?q=80&w=800&auto=format&fit=crop`;
+    // Use the custom generated nano banana placeholder icon
+    src = "/products/fallback-plant.png";
   }
 
   return {

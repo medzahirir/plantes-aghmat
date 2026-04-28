@@ -15,6 +15,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const [activeTab, setActiveTab] = useState<"cart" | "shipping" | "payment">("cart");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     email: "",
     name: "",
@@ -34,11 +35,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const finalTotal = totalPrice > 1000 ? totalPrice : totalPrice + 50;
 
   const handleNextStep = async () => {
+    setErrorMsg(null);
+    
     if (activeTab === "cart") {
       setActiveTab("shipping");
     } else if (activeTab === "shipping") {
       if (!formData.email || !formData.name || !formData.address || !formData.city) {
-        alert("Veuillez remplir tous les champs de livraison.");
+        setErrorMsg("Veuillez remplir tous les champs de livraison.");
         return;
       }
       setActiveTab("payment");
@@ -60,10 +63,11 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           setOrderSuccess(result.orderId || "success");
           clearCart();
         } else {
-          alert(result.error);
+          setErrorMsg(result.error || "Une erreur inattendue est survenue.");
         }
-      } catch {
-        alert("Une erreur est survenue.");
+      } catch (err) {
+        console.error(err);
+        setErrorMsg("Impossible de joindre le serveur. Veuillez réessayer.");
       } finally {
         setIsSubmitting(false);
       }
@@ -71,6 +75,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMsg(null); // Clear error on typing
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -351,23 +356,36 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <span className="font-display text-2xl md:text-3xl text-primary">{finalTotal} MAD</span>
                   </div>
                 </div>
+                
+                {errorMsg && (
+                  <div className="mb-4 p-3 bg-error/10 border border-error/20 rounded-xl flex gap-3 items-start animate-in fade-in slide-in-from-bottom-2">
+                    <span className="material-symbols-outlined text-error text-lg">error</span>
+                    <p className="text-xs text-error font-medium">{errorMsg}</p>
+                  </div>
+                )}
+                
                 <button
                   onClick={handleNextStep}
                   disabled={isSubmitting}
-                  className="w-full bg-primary text-white py-2 rounded-full font-label font-bold text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 active:scale-95 transition-all duration-200 disabled:opacity-50"
+                  className="w-full bg-primary text-white py-3 rounded-full font-label font-bold text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 active:scale-95 transition-all duration-200 disabled:opacity-70 flex items-center justify-center gap-2"
                 >
-                  {isSubmitting
-                    ? "Traitement..."
-                    : activeTab === "cart"
-                    ? "Passer à la livraison"
-                    : activeTab === "shipping"
-                    ? "Passer au paiement"
-                    : "Confirmer la commande"}
+                  {isSubmitting ? (
+                    <>
+                      <span className="material-symbols-outlined animate-spin text-sm">autorenew</span>
+                      Traitement en cours...
+                    </>
+                  ) : activeTab === "cart" ? (
+                    "Passer à la livraison"
+                  ) : activeTab === "shipping" ? (
+                    "Passer au paiement"
+                  ) : (
+                    "Confirmer la commande"
+                  )}
                 </button>
                 <button
                   disabled={isSubmitting}
                   onClick={activeTab === "cart" ? onClose : () => setActiveTab("cart")}
-                  className="w-full mt-2 text-center text-[9px] font-label uppercase tracking-widest font-bold text-primary/40 hover:text-primary transition-colors disabled:opacity-0"
+                  className="w-full mt-3 text-center text-[9px] font-label uppercase tracking-widest font-bold text-primary/40 hover:text-primary transition-colors disabled:opacity-0"
                 >
                   {activeTab === "cart" ? "Continuer mes achats" : "Retour au panier"}
                 </button>
