@@ -24,7 +24,7 @@ export function Navbar() {
   useEffect(() => {
     setMounted(true);
   }, []);
-//  if (!mounted) return null;//IMPORTANT.
+ 
   const totalItems = mounted ? items.reduce((sum, item) => sum + item.quantity, 0) : 0;
 
   return (
