@@ -28,6 +28,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
     // Add the item multiple times if quantity > 1
     // The useCart hook will handle incrementing the quantity in the cart state
     for (let i = 0; i < quantity; i++) {
+      
       addItem(product as any);
     }
     
