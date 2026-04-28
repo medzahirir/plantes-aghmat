@@ -14,7 +14,7 @@ interface CreateOrderInput {
 }
 
 export async function createOrderInDb(input: CreateOrderInput) {
-<<<<<<< HEAD
+ 
   return await prisma.$transaction(
     async (tx) => {
       // 1. Find or create user
@@ -57,7 +57,7 @@ export async function createOrderInDb(input: CreateOrderInput) {
       timeout: 20000, // default: 5000
     }
   );
-=======
+ 
   return await prisma.$transaction(async (tx) => {
     // 1. Find or create user
     let user = await tx.user.findUnique({
@@ -94,5 +94,5 @@ export async function createOrderInDb(input: CreateOrderInput) {
 
     return order;
   });
->>>>>>> c41a94f
+ 
 }
