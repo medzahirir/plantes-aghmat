@@ -128,6 +128,7 @@ export function ProductGrid({ initialProducts, initialCategories }: ProductGridP
               >
                 VOIR LES {filtered.length - DEFAULT_VISIBLE} AUTRES PLANTES
               </button>
+  
             </div>
           )}
         </>

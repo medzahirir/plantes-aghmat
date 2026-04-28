@@ -49,6 +49,7 @@ export const useCart = create<CartStore>()(
     }),
     {
       name: "aghmat-cart-storage",
+        skipHydration: true, // 👈 AJOUTE
     }
   )
 );
