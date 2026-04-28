@@ -9,7 +9,16 @@ import { ServicesSection } from "@/components/shared/services-section";
 import { TestimonialsSection } from "@/components/shared/testimonials-section";
 import { ProductGrid } from "@/features/products/presentation/product-grid";
 
-export default function Home() {
+import { getProductCatalog, getCategories } from "@/features/products/application/get-product-catalog";
+
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const [products, categories] = await Promise.all([
+    getProductCatalog(),
+    getCategories(),
+  ]);
+
   return (
     <div className="relative min-h-screen overflow-x-clip bg-background text-on-surface">
       <Navbar />
@@ -21,7 +30,7 @@ export default function Home() {
         {/* 3. Target clients — Hôtels / Villas / Résidences / Public */}
         <AboutSection />
         {/* 4. Product carousel */}
-        <ProductGrid />
+        <ProductGrid initialProducts={products} initialCategories={categories} />
         {/* 5. Features — Direct pépinière / Qualité / Conseils */}
         <FeaturesSection />
         {/* 6. Gallery — transformations */}

@@ -1,26 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { productCatalog } from "@/features/products/infrastructure/catalog";
-
-const tabs: { label: string; categoryId: string | null }[] = [
-  { label: "Tous", categoryId: null },
-  { label: "Intérieur", categoryId: "interieur" },
-  { label: "Extérieur", categoryId: "exterieur" },
-  { label: "Fruitiers", categoryId: "fruitiers" },
-  { label: "Aromatiques", categoryId: "aromatiques" },
-];
+import Link from "next/link";
+import { useCart } from "@/hooks/use-cart";
+import type { Product, Category } from "@/types/product";
 
 const DEFAULT_VISIBLE = 12;
 
-export function ProductGrid() {
+interface ProductGridProps {
+  initialProducts: Product[];
+  initialCategories: Category[];
+}
+
+export function ProductGrid({ initialProducts, initialCategories }: ProductGridProps) {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const addItem = useCart((state) => state.addItem);
+
+  const tabs = [
+    { label: "Tous", categoryId: null },
+    ...initialCategories.map((c) => ({ label: c.name, categoryId: c.id })),
+  ];
 
   const filtered =
     activeTab === null
-      ? productCatalog
-      : productCatalog.filter((p) => p.categoryId === activeTab);
+      ? initialProducts
+      : initialProducts.filter((p) => p.categoryId === activeTab);
 
   const visible = showAll ? filtered : filtered.slice(0, DEFAULT_VISIBLE);
   const hasMore = filtered.length > DEFAULT_VISIBLE && !showAll;
@@ -31,15 +36,12 @@ export function ProductGrid() {
   }
 
   function countFor(categoryId: string | null) {
-    if (categoryId === null) return productCatalog.length;
-    return productCatalog.filter((p) => p.categoryId === categoryId).length;
+    if (categoryId === null) return initialProducts.length;
+    return initialProducts.filter((p) => p.categoryId === categoryId).length;
   }
 
   return (
-    <section
-      id="plants"
-      className="mx-auto max-w-[1440px] overflow-hidden px-8 py-24"
-    >
+    <section id="plants" className="mx-auto max-w-[1440px] overflow-hidden px-8 py-24">
       {/* Header */}
       <div className="mb-12 flex flex-col items-baseline justify-between gap-4 md:flex-row">
         <h2 className="font-display text-4xl italic text-primary">
@@ -82,26 +84,36 @@ export function ProductGrid() {
       ) : (
         <>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {visible.map(({ id, name, category, price, image }) => (
-              <div key={id} className="group">
-                <div className="mb-4 aspect-[4/5] overflow-hidden rounded-xl bg-surface-container-low">
+            {visible.map((product) => (
+              <div key={product.id} className="group flex flex-col">
+                {/* Clickable image → product detail */}
+                <Link
+                  href={`/product/${product.id}`}
+                  className="mb-4 block aspect-[4/5] overflow-hidden rounded-xl bg-surface-container-low"
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={image.src}
-                    alt={image.alt}
+                    src={product.image.src}
+                    alt={product.image.alt}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                </div>
+                </Link>
+
                 <div className="flex items-start justify-between">
                   <div>
-                    <h5 className="font-display text-xl text-primary">{name}</h5>
-                    <p className="text-sm italic text-on-surface-variant">
-                      {category}
-                    </p>
+                    <Link href={`/product/${product.id}`} className="hover:underline">
+                      <h5 className="font-display text-xl text-primary">{product.name}</h5>
+                    </Link>
+                    <p className="text-sm italic text-on-surface-variant">{product.category}</p>
                   </div>
-                  <span className="font-bold text-primary">{price} DH</span>
+                  <span className="font-bold text-primary">{product.price} DH</span>
                 </div>
-                <button className="mt-6 w-full rounded-full border border-primary/10 py-3 text-xs font-bold tracking-widest text-primary transition-all hover:bg-primary hover:text-on-primary">
+
+                {/* Commander button → adds to cart */}
+                <button
+                  onClick={() => addItem(product)}
+                  className="mt-6 w-full rounded-full border border-primary/10 py-3 text-xs font-bold tracking-widest text-primary transition-all hover:bg-primary hover:text-on-primary"
+                >
                   COMMANDER
                 </button>
               </div>
