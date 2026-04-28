@@ -1,0 +1,88 @@
+-- 1. Création de l'énumération pour les rôles
+CREATE TYPE "Role" AS ENUM ('USER', 'EDITOR', 'MANAGER', 'ADMIN', 'SUPERUSER', 'PROVIDER', 'SHIPPER');
+
+-- 2. Table des Utilisateurs
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "name" TEXT,
+    "role" "Role" NOT NULL DEFAULT 'USER',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- 3. Table des Profils
+CREATE TABLE "Profile" (
+    "id" TEXT NOT NULL,
+    "bio" TEXT,
+    "userId" TEXT NOT NULL,
+    CONSTRAINT "Profile_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
+
+-- 4. Table des Catégories
+CREATE TABLE "Category" (
+    "id" TEXT NOT NULL,
+    "name_fr" TEXT NOT NULL,
+    "name_ar" TEXT NOT NULL,
+    "description_fr" TEXT,
+    "description_ar" TEXT,
+    CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
+);
+
+-- 5. Table des Produits
+CREATE TABLE "Product" (
+    "id" TEXT NOT NULL,
+    "name_fr" TEXT NOT NULL,
+    "name_ar" TEXT NOT NULL,
+    "description_fr" TEXT NOT NULL,
+    "description_ar" TEXT NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
+    "stock" INTEGER NOT NULL DEFAULT 0,
+    "accent" TEXT,
+    "categoryId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
+);
+
+-- 6. Table des Images
+CREATE TABLE "Image" (
+    "id" TEXT NOT NULL,
+    "src" TEXT NOT NULL,
+    "alt" TEXT,
+    "productId" TEXT NOT NULL,
+    CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
+);
+
+-- 7. Table des Commandes
+CREATE TABLE "Order" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "total" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "shipperId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
+);
+
+-- 8. Table des Articles de Commande
+CREATE TABLE "OrderItem" (
+    "id" TEXT NOT NULL,
+    "orderId" TEXT NOT NULL,
+    "productId" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
+    CONSTRAINT "OrderItem_pkey" PRIMARY KEY ("id")
+);
+
+-- 9. Ajout des relations (Clés étrangères)
+ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Image" ADD CONSTRAINT "Image_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Order" ADD CONSTRAINT "Order_shipperId_fkey" FOREIGN KEY ("shipperId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

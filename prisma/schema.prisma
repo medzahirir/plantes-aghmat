@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  EDITOR
+  MANAGER
+  ADMIN
+  SUPERUSER
+  PROVIDER
+  SHIPPER
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  role          Role      @default(USER)
+  orders        Order[]   @relation("UserOrders")
+  shippedOrders Order[]   @relation("ShipperOrders")
+  profile       Profile?
+  createdAt     DateTime  @default(now())
+}
+
+model Profile {
+  id     String @id @default(cuid())
+  bio    String?
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id             String    @id @default(cuid())
+  name_fr        String
+  name_ar        String
+  description_fr String?
+  description_ar String?
+  products       Product[]
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  name_fr        String
+  name_ar        String
+  description_fr String
+  description_ar String
+  price          Float
+  stock          Int      @default(0)
+  accent         String?
+  images         Image[]
+  categoryId     String
+  category       Category @relation(fields: [categoryId], references: [id])
+  orderItems     OrderItem[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Image {
+  id        String  @id @default(cuid())
+  src       String
+  alt       String?
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation("UserOrders", fields: [userId], references: [id])
+  status    String      @default("PENDING") // PENDING, SHIPPED, DELIVERED, CANCELLED
+  items     OrderItem[]
+  total     Float       @default(0)
+  shipperId String?
+  shipper   User?       @relation("ShipperOrders", fields: [shipperId], references: [id])
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+}
