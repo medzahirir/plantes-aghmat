@@ -3,19 +3,18 @@ import type { NextConfig } from "next";
 const isDevelopment = process.env.NODE_ENV === "development";
 
 const contentSecurityPolicy = [
-  "default-src 'self'",
+  "default-src 'self' https: data:",
   isDevelopment
-    ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'"
-    : "script-src 'self'",
+    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+    : "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://lh3.googleusercontent.com https://images.unsplash.com",
+  "img-src 'self' data: blob: https: https://images.unsplash.com https://lh3.googleusercontent.com",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self'",
-  "frame-src 'self' https://www.google.com https://www.google.com/maps https://maps.google.com",
+  "connect-src 'self' https:",
+  "frame-src 'self' https://www.google.com https://maps.google.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  "frame-ancestors 'none'",
   !isDevelopment ? "upgrade-insecure-requests" : "",
 ]
   .filter(Boolean)
@@ -36,7 +35,7 @@ const securityHeaders = [
   },
   {
     key: "X-Frame-Options",
-    value: "DENY",
+    value: "SAMEORIGIN",
   },
   {
     key: "X-DNS-Prefetch-Control",
@@ -44,19 +43,7 @@ const securityHeaders = [
   },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
-  },
-  {
-    key: "Strict-Transport-Security",
-    value: "max-age=63072000; includeSubDomains; preload",
-  },
-  {
-    key: "Cross-Origin-Opener-Policy",
-    value: "same-origin",
-  },
-  {
-    key: "Cross-Origin-Resource-Policy",
-    value: "same-origin",
+    value: "camera=(), microphone=(), geolocation=()",
   },
 ];
 
@@ -64,7 +51,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
-  allowedDevOrigins: ["192.168.81.141"],
+
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
@@ -72,16 +59,12 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
+
   async headers() {
     return [
       {
         source: "/(.*)",
-         headers: [
-          {
-            key: "Content-Security-Policy",
-            value: "script-src 'self' 'unsafe-inline' 'unsafe-eval';",
-          },
-        ],
+        headers: securityHeaders,
       },
     ];
   },
