@@ -31,7 +31,7 @@ export function Navbar() {
     <header className="fixed top-0 z-50 w-full bg-[rgba(251,249,245,0.80)] shadow-[0_1px_0_rgba(27,28,26,0.05)] backdrop-blur-md">
       <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4 md:px-8">
         <Link href="/" className="font-display text-2xl font-bold tracking-tight text-primary">
-          Plantes Aghmat
+          Plantes ....
         </Link>
 
         {/* Desktop Navigation */}
