@@ -11,7 +11,7 @@ const siteConfigSchema = z.object({
   NEXT_PUBLIC_WHATSAPP_NUMBER: z
     .string()
     .regex(/^\d+$/)
-    .default("212611223344"),
+    .default("212659507250"),
   NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL: z
     .string()
     .url()
