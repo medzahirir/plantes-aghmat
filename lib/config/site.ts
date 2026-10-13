@@ -3,7 +3,7 @@ import { z } from "zod";
 const siteConfigSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.string().url().default("https://www.aghmatplants.ma"),
   NEXT_PUBLIC_BUSINESS_NAME: z.string().min(1).default("Aghmat Plants"),
-  NEXT_PUBLIC_BUSINESS_PHONE: z.string().min(1).default("+212 611 22 33 44"),
+  NEXT_PUBLIC_BUSINESS_PHONE: z.string().min(1).default("+212 659 507 250"),
   NEXT_PUBLIC_BUSINESS_EMAIL: z
     .string()
     .email()
